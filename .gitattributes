@@ -1,0 +1,8 @@
+# Preserve the exact bytes of recovered live files and deployment source.
+/index.html -text
+/patient.html -text
+/firebase-config.js -text
+/core/*.js -text
+/functions/*.py -text
+/functions/requirements.txt -text
+/firestore.rules -text

@@ -1,0 +1,11 @@
+{
+  "name": "lexivoice",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/preview.mjs",
+    "dev:business": "node business/server.mjs",
+    "test:business": "node --test business/test/*.test.mjs"
+  }
+}

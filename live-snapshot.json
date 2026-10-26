@@ -1,0 +1,48 @@
+{
+  "source": "https://lexivoice.dk/",
+  "recordedAtUtc": "2026-10-07T22:22:28.2963839Z",
+  "files": [
+    {
+      "path": "index.html",
+      "url": "https://lexivoice.dk/index.html",
+      "sha256": "9dcbb7c29d2fdc4eb8e613dfa1d425f3e987858940e75d31d0a288ee671c6256",
+      "bytes": 73781
+    },
+    {
+      "path": "patient.html",
+      "url": "https://lexivoice.dk/patient.html",
+      "sha256": "e7a2cf4797b21677e262d696ce0c349f40e355fc04917543260365084752cb9d",
+      "bytes": 25063
+    },
+    {
+      "path": "firebase-config.js",
+      "url": "https://lexivoice.dk/firebase-config.js",
+      "sha256": "a1ea62d75fde0f45beb655d775fda478662fe73989916bd8cce3fea6b216c3e5",
+      "bytes": 491
+    },
+    {
+      "path": "core/audio-translation-stream.js",
+      "url": "https://lexivoice.dk/core/audio-translation-stream.js",
+      "sha256": "ec559999226b5248426120d056125a87c35c675e1dcc22f46359a0655f7035db",
+      "bytes": 22940
+    },
+    {
+      "path": "core/browser-speech-recognition.js",
+      "url": "https://lexivoice.dk/core/browser-speech-recognition.js",
+      "sha256": "6cb475aba90f58d3300654a17475bc3e7d0f40d8649261b5e9137c2148fa1cc2",
+      "bytes": 14912
+    },
+    {
+      "path": "core/live-translation.js",
+      "url": "https://lexivoice.dk/core/live-translation.js",
+      "sha256": "cde347b247846b2de2ef089d65709ae811ca45841aba4821725c91ccfe5b2577",
+      "bytes": 9789
+    },
+    {
+      "path": "core/webrtc-call.js",
+      "url": "https://lexivoice.dk/core/webrtc-call.js",
+      "sha256": "d83218294d2308f7ecb592ebd4db3208269393d88bede1b1ef3165aa2beee498",
+      "bytes": 39491
+    }
+  ]
+}

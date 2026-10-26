@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Video sessions - allow read/write for WebRTC
+    match /video_sessions/{sessionId} {
+      allow read, write: if true;
+      
+      // WebRTC ICE candidates
+      match /callerCandidates/{candidateId} {
+        allow read, write: if true;
+      }
+      
+      match /calleeCandidates/{candidateId} {
+        allow read, write: if true;
+      }
+      
+      // Transcripts - allow read/write for doctor and patient
+      match /transcripts/{transcriptId} {
+        allow read, write: if true;
+      }
+      
+      // Consent - allow patient to write consent
+      match /consent/{consentId} {
+        allow read, write: if true;
+      }
+      
+      // Audit logs - allow patient and doctor to write
+      match /audit/{auditId} {
+        allow read, write: if true;
+      }
+    }
+  }
+}

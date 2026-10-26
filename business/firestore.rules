@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owns(businessId) {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerUid == request.auth.uid;
+    }
+    match /businesses/{businessId} {
+      allow read: if owns(businessId);
+      allow write: if false;
+      match /calls/{callId} {
+        allow read: if owns(businessId);
+        allow write: if false;
+      }
+      match /bookings/{bookingId} {
+        allow read: if owns(businessId);
+        allow write: if false;
+      }
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

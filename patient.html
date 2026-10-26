@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videosamtale med læge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0;
+            padding: 0;
+            min-height: 100vh; 
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            min-height: 400px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .doctor-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 180px;
+            height: 135px;
+            border-radius: 16px;
+            overflow: hidden;
+            z-index: 15;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(20, 184, 166, 0.3);
+        }
+        .doctor-overlay-label {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #14b8a6;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            z-index: 16;
+        }
+        .status-bar {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            text-align: center;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .status-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fbbf24;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.connected { background: #10b981; animation: none; }
+        .status-dot.error { background: #ef4444; animation: none; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .message-area {
+            background: #1e3a8a;
+            padding: 30px 20px;
+            min-height: 200px;
+        }
+        .message-box {
+            background: #fff;
+            color: #000;
+            border-radius: 16px;
+            padding: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.6;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .message-label {
+            color: #93c5fd;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .button-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .big-button {
+            width: 100%;
+            padding: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .big-button:active {
+            transform: scale(0.95);
+        }
+        .btn-end {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-end:hover {
+            background: #b91c1c;
+        }
+        .consent-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .consent-box {
+            background: #fff;
+            color: #000;
+            border-radius: 0;
+            padding-top: max(env(safe-area-inset-top), 40px);
+            padding-bottom: max(env(safe-area-inset-bottom), 80px);
+            padding-left: max(env(safe-area-inset-left), 20px);
+            padding-right: max(env(safe-area-inset-right), 20px);
+            max-width: 600px;
+            width: 100%;
+            min-height: 100vh;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        .consent-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .consent-item {
+            font-size: 16px;
+            margin: 12px 0;
+            padding: 12px;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+        .consent-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 20px;
+            padding-bottom: max(env(safe-area-inset-bottom), 30px);
+        }
+        .consent-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .consent-accept {
+            background: #10b981;
+            color: #fff;
+            order: 1;
+        }
+        .consent-decline {
+            background: #6b7280;
+            color: #fff;
+            order: 2;
+        }
+        @media (max-width: 768px) {
+            .video-container { height: 50vh; min-height: 300px; }
+            .message-box { font-size: 22px; padding: 20px; }
+            .big-button { font-size: 20px; padding: 20px; }
+            .consent-box { padding: 25px; }
+            .consent-title { font-size: 24px; }
+            .consent-item { font-size: 16px; }
+            .doctor-overlay {
+                width: 120px;
+                height: 90px;
+                bottom: 12px;
+                right: 12px;
+            }
+            .doctor-overlay-label {
+                font-size: 8px;
+                padding: 3px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Consent Modal -->
+    <div id="consentModal" class="consent-modal" style="display: flex;">
+        <div class="consent-box">
+            <div class="consent-title">📞 Samtykke til Videosamtale</div>
+            
+            <div style="margin: 15px 0; padding: 15px; background: #f0fdf4; border-radius: 12px; font-size: 15px; line-height: 1.5; color: #166534; border: 2px solid #86efac;">
+                <p style="margin-bottom: 10px; font-weight: 600;">✓ Video og lyd kun live - intet gemmes</p>
+                <p style="margin-bottom: 10px; font-weight: 600;">✓ Automatisk oversættelse dansk ↔ grønlandsk</p>
+                <p style="margin: 0; font-weight: 600;">✓ Tekst gemmes i 24 timer til journalen</p>
+            </div>
+
+            <div style="margin: 15px 0;">
+                <label style="display: block; font-weight: 700; margin-bottom: 10px; color: #111827; font-size: 16px;">Dit fulde navn:</label>
+                <input 
+                    type="text" 
+                    id="patientNameInput" 
+                    placeholder="Fx. Anna Nielsen"
+                    style="width: 100%; padding: 16px; font-size: 18px; border: 3px solid #d1d5db; border-radius: 12px; color: #000; box-sizing: border-box;"
+                />
+            </div>
+
+            <div style="margin: 15px 0;">
+                <label style="display: block; font-weight: 700; margin-bottom: 10px; color: #111827; font-size: 16px;">Skriv dit navn igen (underskrift):</label>
+                <input 
+                    type="text" 
+                    id="signatureInput" 
+                    placeholder="Fx. Anna Nielsen"
+                    style="width: 100%; padding: 16px; font-size: 18px; border: 3px solid #d1d5db; border-radius: 12px; color: #000; box-sizing: border-box;"
+                />
+            </div>
+
+            <div style="margin: 20px 0; padding: 15px; background: #fef3c7; border-radius: 12px; border: 2px solid #fbbf24;">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 16px; color: #78350f;">
+                    <input type="checkbox" id="consentCheckbox" style="width: 24px; height: 24px; cursor: pointer; margin-top: 2px; flex-shrink: 0;" />
+                    <span style="font-weight: 600;">Jeg accepterer at deltage i videosamtalen med automatisk oversættelse</span>
+                </label>
+            </div>
+
+            <div id="consentError" style="display: none; margin: 15px 0; padding: 15px; background: #fee2e2; color: #991b1b; border-radius: 12px; font-size: 16px; font-weight: 600; border: 2px solid #ef4444;"></div>
+
+            <div class="consent-buttons">
+                <button id="acceptConsentBtn" class="consent-btn consent-accept">
+                    ✓ Jeg accepterer og starter samtalen
+                </button>
+                <button id="declineConsentBtn" class="consent-btn consent-decline">
+                    ✕ Afvis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main id="mainContent" class="container" style="display: none;">
+        <!-- Video Area -->
+        <div class="video-container">
+            <!-- Patient's own video (MAIN, fullscreen - for showing wounds/injuries) -->
+            <video id="localVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            
+            <!-- Doctor's video (small overlay, bottom-right) -->
+            <div class="doctor-overlay">
+                <span class="doctor-overlay-label">Læge</span>
+                <video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+            </div>
+            
+            <div id="videoPlaceholder" class="video-placeholder">
+                <div style="font-size: 48px; margin-bottom: 15px;">📹</div>
+                <div>Forbinder til lægen...</div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator">
+                <span id="statusDot" class="status-dot"></span>
+                <span id="statusText">Forbinder...</span>
+            </div>
+        </div>
+
+        <!-- Message from Doctor -->
+        <div class="message-area">
+            <div class="message-label">💬 BESKED FRA LÆGEN</div>
+            <div class="message-box">
+                <div id="doctorMessageGreenlandic">Afventer besked...</div>
+            </div>
+        </div>
+
+        <!-- End Call Button -->
+        <div class="button-area">
+            <button id="endCallBtn" class="big-button btn-end">
+                <span style="font-size: 32px;">📞</span>
+                <span>AFSLUT SAMTALE</span>
+            </button>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    <script src="/firebase-config.js"></script>
+    <script src="/core/audio-translation-stream.js"></script>
+
+    <script type="module">
+        import { WebRTCCall } from "/core/webrtc-call.js";
+        
+        const db = window.firebaseDb;
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get("session");
+
+        const consentModal = document.getElementById("consentModal");
+        const mainContent = document.getElementById("mainContent");
+        const acceptConsentBtn = document.getElementById("acceptConsentBtn");
+        const declineConsentBtn = document.getElementById("declineConsentBtn");
+        const patientNameInput = document.getElementById("patientNameInput");
+        const signatureInput = document.getElementById("signatureInput");
+        const consentCheckbox = document.getElementById("consentCheckbox");
+        const consentError = document.getElementById("consentError");
+        
+        const statusDot = document.getElementById("statusDot");
+        const statusText = document.getElementById("statusText");
+        const endCallBtn = document.getElementById("endCallBtn");
+        const videoPlaceholder = document.getElementById("videoPlaceholder");
+        const doctorMessageGreenlandic = document.getElementById("doctorMessageGreenlandic");
+
+        const CONSENT_TEXT = `Jeg accepterer, at denne samtale kan foregå via video, chat, automatisk transskription og automatisk oversættelse.
+
+Formålet er at hjælpe lægen/sundhedspersonen med at forstå og gennemføre samtalen.
+
+Jeg forstår, at løsningen er en prototype og ikke erstatter lægens vurdering.`;
+
+        function setStatus(message, state = "") {
+            if (statusText) statusText.textContent = message;
+            if (statusDot) {
+                statusDot.className = "status-dot";
+                if (state === "connected") {
+                    statusDot.classList.add("connected");
+                } else if (state === "error") {
+                    statusDot.classList.add("error");
+                }
+            }
+        }
+
+        // Validation
+        function validateConsent() {
+            const name = patientNameInput.value.trim();
+            const signature = signatureInput.value.trim();
+            const checked = consentCheckbox.checked;
+
+            if (name.length < 2) {
+                return { valid: false, error: "Indtast venligst dit fulde navn (mindst 2 tegn)" };
+            }
+
+            if (signature.length < 2) {
+                return { valid: false, error: "Skriv venligst dit navn som underskrift (mindst 2 tegn)" };
+            }
+
+            if (!checked) {
+                return { valid: false, error: "Du skal acceptere betingelserne for at fortsætte" };
+            }
+
+            return { valid: true, name, signature };
+        }
+
+        function showError(message) {
+            consentError.textContent = message;
+            consentError.style.display = "block";
+        }
+
+        function hideError() {
+            consentError.style.display = "none";
+        }
+
+        // Consent handling
+        async function saveConsent(patientName, signatureText) {
+            try {
+                console.log("[consent] Saving consent for session:", sessionId);
+                console.log("[consent] Patient name:", patientName);
+                
+                // Update session document with consent
+                await db.collection("video_sessions").doc(sessionId).update({
+                    "consent.accepted": true,
+                    "consent.acceptedAt": firebase.firestore.FieldValue.serverTimestamp(),
+                    "consent.patientName": patientName,
+                    "consent.signatureText": signatureText,
+                    "consent.verificationMethod": "typed_signature",
+                    "consent.consentVersion": "lexivoice-consent-v1",
+                    "consent.text": CONSENT_TEXT,
+                    "status": "patient_consented"
+                });
+                console.log("[consent] Patient consent saved successfully");
+                
+                // Add audit log
+                await db.collection("video_sessions").doc(sessionId).collection("audit").add({
+                    event: "consent_accepted",
+                    role: "patient",
+                    patientName: patientName,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("[consent] Audit log saved successfully");
+                return true;
+            } catch (error) {
+                console.error("[consent] Failed to save:", error);
+                console.error("[consent] Error code:", error.code);
+                console.error("[consent] Error message:", error.message);
+                
+                if (error.code === 'permission-denied') {
+                    showError("Kunne ikke gemme samtykke. Kontakt support.");
+                } else {
+                    showError("Der opstod en fejl: " + error.message);
+                }
+                return false;
+            }
+        }
+
+        acceptConsentBtn.addEventListener("click", async () => {
+            console.log("[consent] Accept button clicked");
+            hideError();
+            
+            // Validate inputs
+            const validation = validateConsent();
+            if (!validation.valid) {
+                showError(validation.error);
+                return;
+            }
+            
+            console.log("[consent] Validation passed");
+            acceptConsentBtn.disabled = true;
+            acceptConsentBtn.textContent = "Gemmer samtykke...";
+            
+            const saved = await saveConsent(validation.name, validation.signature);
+            
+            if (saved) {
+                console.log("[consent] Consent saved, starting patient flow");
+                consentModal.style.display = "none";
+                mainContent.style.display = "block";
+                console.log("[patient] Starting WebRTC after consent");
+                initializeSession();
+            } else {
+                acceptConsentBtn.disabled = false;
+                acceptConsentBtn.textContent = "✓ Jeg accepterer og starter samtalen";
+            }
+        });
+
+        declineConsentBtn.addEventListener("click", () => {
+            console.log("[consent] Patient declined");
+            alert("Du skal acceptere for at starte videosamtale.");
+            window.location.href = "/";
+        });
+
+        function initializeSession() {
+            if (!sessionId) {
+                setStatus("Fejl: Intet session-ID", "error");
+                if (videoPlaceholder) {
+                    videoPlaceholder.innerHTML = `
+                        <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+                        <div>Fejl: Intet session-ID</div>
+                        <div style="font-size: 16px; margin-top: 10px; opacity: 0.7;">Brug linket fra lægen</div>
+                    `;
+                }
+                return;
+            }
+
+            const webrtcCall = new WebRTCCall({
+                firestore: db,
+                localVideoId: "localVideo",
+                remoteVideoId: "remoteVideo",
+                isDoctor: false
+            });
+
+            webrtcCall.onStatusChange = (message) => {
+                if (message.includes("Tilsluttet")) {
+                    setStatus("✓ Tilsluttet", "connected");
+                    if (videoPlaceholder) {
+                        videoPlaceholder.style.display = "none";
+                    }
+                } else if (message.includes("Forbinder")) {
+                    setStatus("Forbinder...", "");
+                } else if (message.includes("mistet")) {
+                    setStatus("⚠ Forbindelse mistet", "error");
+                } else {
+                    setStatus(message, "");
+                }
+            };
+
+            endCallBtn?.addEventListener("click", async () => {
+                if (confirm("Afslut videosamtale?")) {
+                    await webrtcCall.endCall();
+                    setStatus("Samtale afsluttet", "");
+                    
+                    if (videoPlaceholder) {
+                        videoPlaceholder.style.display = "flex";
+                        videoPlaceholder.innerHTML = `
+                            <div style="font-size: 48px; margin-bottom: 15px;">✓</div>
+                            <div>Samtale afsluttet</div>
+                            <div style="font-size: 16px; margin-top: 20px; opacity: 0.8;">Tak for samtalen</div>
+                        `;
+                    }
+                    // Patient stays on this page - no redirect
+                }
+            });
+
+            // Listen for doctor messages
+            function listenForDoctorMessages() {
+                console.log("[patient] Starting listener for doctor messages");
+                console.log("[patient] Session ID:", sessionId);
+                console.log("[patient] Query path: video_sessions/" + sessionId + "/transcripts");
+                console.log("[patient] Query filters: role == 'doctor', orderBy createdAt desc, limit 1");
+                
+                try {
+                    db.collection("video_sessions").doc(sessionId)
+                        .collection("transcripts")
+                        .where("role", "==", "doctor")
+                        .orderBy("createdAt", "desc")
+                        .limit(1)
+                        .onSnapshot((snapshot) => {
+                            console.log("[patient] Snapshot received, changes:", snapshot.docChanges().length);
+                            snapshot.docChanges().forEach((change) => {
+                                if (change.type === "added") {
+                                    const data = change.doc.data();
+                                    console.log("[patient] Doctor message received:", data);
+                                    
+                                    if (doctorMessageGreenlandic && data.translatedText) {
+                                        doctorMessageGreenlandic.textContent = data.translatedText;
+                                    }
+                                }
+                            });
+                        }, (error) => {
+                            console.error("[patient] Listener error:", error);
+                            console.error("[patient] Error code:", error.code);
+                            console.error("[patient] Error message:", error.message);
+                            
+                            if (error.code === 'permission-denied') {
+                                console.error("[patient] Permission denied - Firestore rules may need updating");
+                                if (doctorMessageGreenlandic) {
+                                    doctorMessageGreenlandic.textContent = "Kunne ikke hente beskeder (adgang nægtet)";
+                                }
+                            } else if (error.code === 'failed-precondition' || error.message.includes('index')) {
+                                console.error("[patient] Missing index - composite index required for this query");
+                                if (doctorMessageGreenlandic) {
+                                    doctorMessageGreenlandic.textContent = "Kunne ikke hente beskeder (mangler index)";
+                                }
+                            } else {
+                                if (doctorMessageGreenlandic) {
+                                    doctorMessageGreenlandic.textContent = "Kunne ikke hente beskeder";
+                                }
+                            }
+                        });
+                } catch (error) {
+                    console.error("[patient] Failed to set up listener:", error);
+                    if (doctorMessageGreenlandic) {
+                        doctorMessageGreenlandic.textContent = "Kunne ikke starte besked-lytter";
+                    }
+                }
+            }
+
+            // Start session
+            (async () => {
+                setStatus("Forbinder...", "");
+                const joined = await webrtcCall.joinSession(sessionId);
+                
+                if (!joined) {
+                    setStatus("Kunne ikke forbinde", "error");
+                } else {
+                    listenForDoctorMessages();
+                    
+                    try {
+                        await db.collection("video_sessions").doc(sessionId).collection("audit").add({
+                            event: "patient_joined",
+                            role: "patient",
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log("[patient] Audit log: patient_joined saved");
+                    } catch (error) {
+                        console.error("[patient] Failed to save audit log:", error);
+                        // Non-critical error, continue anyway
+                    }
+                }
+            })();
+        }
+    </script>
+</body>
+</html>

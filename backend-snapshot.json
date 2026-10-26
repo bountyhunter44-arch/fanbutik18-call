@@ -1,0 +1,208 @@
+{
+  "project": "lexivoice-27fc1",
+  "recoveredAtUtc": "2026-10-07T22:28:26.982Z",
+  "functions": [
+    {
+      "id": "healthConversationSupport",
+      "runtime": "python313",
+      "entryPoint": "healthConversationSupport",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "healthConversationSupport/function-source.zip",
+        "generation": "1778403344960491"
+      },
+      "secrets": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "id": "getTurnCredentials",
+      "runtime": "python313",
+      "entryPoint": "getTurnCredentials",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "getTurnCredentials/function-source.zip",
+        "generation": "1778403344761058"
+      },
+      "secrets": [
+        "TURN_DOMAIN",
+        "TURN_USERNAME",
+        "TURN_PASSWORD"
+      ]
+    },
+    {
+      "id": "processAudioChunkBuffered",
+      "runtime": "python313",
+      "entryPoint": "processAudioChunkBuffered",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "processAudioChunkBuffered/function-source.zip",
+        "generation": "1778403344831017"
+      },
+      "secrets": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "id": "routeLexiIntent",
+      "runtime": "python313",
+      "entryPoint": "routeLexiIntent",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "routeLexiIntent/function-source.zip",
+        "generation": "1778403344874348"
+      },
+      "secrets": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "id": "updatePlasmaUI",
+      "runtime": "python313",
+      "entryPoint": "updatePlasmaUI",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "updatePlasmaUI/function-source.zip",
+        "generation": "1778403344857324"
+      },
+      "secrets": []
+    },
+    {
+      "id": "processAudioTranslationChunk",
+      "runtime": "python313",
+      "entryPoint": "processAudioTranslationChunk",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "processAudioTranslationChunk/function-source.zip",
+        "generation": "1778403344864725"
+      },
+      "secrets": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "id": "cleanupExpiredLexiVoiceSessions",
+      "runtime": "python313",
+      "entryPoint": "cleanupExpiredLexiVoiceSessions",
+      "source": {
+        "bucket": "gcf-v2-sources-264270037479-us-central1",
+        "object": "cleanupExpiredLexiVoiceSessions/function-source.zip",
+        "generation": "1778403344308290"
+      },
+      "secrets": []
+    }
+  ],
+  "rules": [
+    {
+      "release": "projects/lexivoice-27fc1/releases/cloud.firestore",
+      "ruleset": "projects/lexivoice-27fc1/rulesets/d2b79ecd-38bc-49fd-9b6e-2343a588385b"
+    }
+  ],
+  "verifiedSourceFiles": [
+    {
+      "archive": "cleanupExpiredLexiVoiceSessions.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "cleanupExpiredLexiVoiceSessions.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "cleanupExpiredLexiVoiceSessions.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "getTurnCredentials.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "getTurnCredentials.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "getTurnCredentials.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "healthConversationSupport.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "healthConversationSupport.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "healthConversationSupport.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "processAudioChunkBuffered.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "processAudioChunkBuffered.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "processAudioChunkBuffered.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "processAudioTranslationChunk.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "processAudioTranslationChunk.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "processAudioTranslationChunk.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "routeLexiIntent.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "routeLexiIntent.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "routeLexiIntent.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    },
+    {
+      "archive": "updatePlasmaUI.zip",
+      "path": "main.py",
+      "sha256": "45ae06ce116f51a6acb81519149ab9f54e04511c9fa0465f6265718097c00012"
+    },
+    {
+      "archive": "updatePlasmaUI.zip",
+      "path": "audio_buffer.py",
+      "sha256": "9db1a5ec11d0bfffae10b43ab749f38fc00cebf4af3c58dc749bf26179414090"
+    },
+    {
+      "archive": "updatePlasmaUI.zip",
+      "path": "requirements.txt",
+      "sha256": "cb3259cde37d7e51646c4334a661c5871ad0e6d66896eb985554a4e779ce0f3a"
+    }
+  ]
+}
